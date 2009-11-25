@@ -21,6 +21,7 @@ text
 
   def test_dot_notation
     assert_equal <<-text, PragmaDotNotation.render
+
 * Chris
 * 24
 text
