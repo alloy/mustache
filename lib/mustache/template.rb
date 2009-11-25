@@ -49,7 +49,6 @@ class Mustache
       # our Mustache template so subsequent calls are very fast and
       # can skip the compilation stage.
       instance_eval(compiled, __FILE__, __LINE__ - 1)
-      puts compiled
 
       # Call the newly rewritten version of #render
       render(context)
