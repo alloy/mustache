@@ -9,6 +9,16 @@ class PragmaTest < Test::Unit::TestCase
 * Chris
 * Mark
 * Scott
+
+
+* Chris
+* Mark
+* Scott
+
+
+* Chris
+* Mark
+* Scott
 text
   end
 end

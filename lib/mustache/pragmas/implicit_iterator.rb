@@ -1,5 +1,5 @@
-Mustache::PRAGMAS['IMPLICIT-ITERATOR'] = proc do |*args|
-  iterator = args[0] || '.'
+Mustache::PRAGMAS['IMPLICIT-ITERATOR'] = proc do |options|
+  iterator = options[:iterator] || '.'
 
 <<-ruby
 \#{def ctx.[](name)

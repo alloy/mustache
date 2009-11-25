@@ -179,7 +179,15 @@ class Mustache
     end
 
     # {{%PRAGMA}} - enable a pragma
-    def pragma(name)
+    def pragma(tag)
+      name, *options = tag.split(' ')
+
+      hash_options = {}
+      options.each do |option|
+        key, value = option.split('=')
+        hash_options[key.to_sym] = value
+      end
+
       name = name.to_s.upcase.gsub(/\W/, '-')
 
       if !Mustache::PRAGMAS[name]
@@ -187,7 +195,7 @@ class Mustache
         require "mustache/pragmas/#{file}"
       end
 
-      Mustache::PRAGMAS[name].call
+      Mustache::PRAGMAS[name].call(hash_options)
     end
 
     # An interpolation-friendly version of a string, for use within a
