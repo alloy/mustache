@@ -49,6 +49,7 @@ class Mustache
       # our Mustache template so subsequent calls are very fast and
       # can skip the compilation stage.
       instance_eval(compiled, __FILE__, __LINE__ - 1)
+      puts compiled
 
       # Call the newly rewritten version of #render
       render(context)
@@ -99,14 +100,16 @@ class Mustache
     end
 
     # Find and replace all non-section tags.
-    # In particular we look for four types of tags:
+    # In particular we look for six types of tags:
     # 1. Escaped variable tags - {{var}}
     # 2. Unescaped variable tags - {{{var}}}
     # 3. Comment variable tags - {{! comment}
     # 4. Partial tags - {{> partial_name }}
+    # 5. Delimiter tags - {{=<% %>=}}
+    # 6. Pragma tags - {{% pragma_name }}
     def compile_tags(src)
       res = ""
-      while src =~ /#{otag}(#|=|!|<|>|\{)?(.+?)\1?#{ctag}+/
+      while src =~ /#{otag}(#|=|!|<|>|%|\{)?(.+?)\1?#{ctag}+/
         res << str($`)
         case $1
         when '#'
@@ -121,6 +124,8 @@ class Mustache
           res << compile_partial($2.strip)
         when '{'
           res << utag($2.strip)
+        when '%'
+          res << pragma($2.strip)
         else
           res << etag($2.strip)
         end
@@ -171,6 +176,18 @@ class Mustache
     # {{{}}} - an unescaped tag
     def utag(s)
       ev("ctx[#{s.strip.to_sym.inspect}]")
+    end
+
+    # {{%PRAGMA}} - enable a pragma
+    def pragma(name)
+      name = name.to_s.upcase.gsub(/\W/, '-')
+
+      if !Mustache::PRAGMAS[name]
+        file = name.downcase.gsub(/\W/, '_')
+        require "mustache/pragmas/#{file}"
+      end
+
+      Mustache::PRAGMAS[name].call
     end
 
     # An interpolation-friendly version of a string, for use within a

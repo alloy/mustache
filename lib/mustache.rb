@@ -70,6 +70,8 @@ require 'mustache/context'
 # for files containing view classes when using the `view_class` method.
 #
 class Mustache
+  PRAGMAS = {}
+
   # Helper method for quickly instantiating and rendering a view.
   def self.render(*args)
     new.render(*args)
