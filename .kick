@@ -1,26 +1,12 @@
-# take control of the growl notifications
-module GrowlHacks
-  def growl(type, subject, body, *args, &block)
-    case type
-    when Kicker::GROWL_NOTIFICATIONS[:succeeded]
-      puts subject = "Success"
-      body = body.split("\n").last
-    when Kicker::GROWL_NOTIFICATIONS[:failed]
-      subject = "Failure"
-      puts body
-      body = body.split("\n").last
-    else
-      return nil
-    end
-    super(type, subject, body, *args, &block)
-  end
-end
+Kicker.silent = true
 
-Kicker.send :extend, GrowlHacks
+recipe :ruby
 
-# no logging
-Kicker::Utils.module_eval do
-  def log(message)
-    nil
+process do |files|
+  tests = files.take_and_map do |file|
+    # Run all tests if anything in lib changes.
+    Dir.glob('test/**/*_test.rb') if file =~ /^lib\//
   end
+  
+  Ruby.run_tests(tests)
 end
