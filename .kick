@@ -1,12 +1,12 @@
 Kicker.silent = true
 
-recipe :ruby
-
 process do |files|
   tests = files.take_and_map do |file|
-    # Run all tests if anything in lib changes.
-    Dir.glob('test/**/*_test.rb') if file =~ /^lib\//
+    # Run _all_ tests if anything in lib/examples changes.
+    Dir.glob('test/**/*_test.rb') if file =~ /^(lib|examples)\//
   end
   
   Ruby.run_tests(tests)
 end
+
+recipe :ruby
